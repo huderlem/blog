@@ -1,0 +1,25 @@
+baseurl = "https://www.huderlem.com"
+languageCode = "en"
+title = "Shanty Blog"
+theme = "charaka-custom"
+copyright = "&copy; <a href=\"https://github.com/huderlem\">Marcus Huderle</a> 2019"
+
+[params]
+
+[author]
+  name = "Marcus Huderle"
+  homepage = "huderlem.com/blog"
+
+[params.highlight]
+  style = "zenburn"
+
+[params.share]
+  enabled = "true"
+
+[[params.social]]
+  url = "about"
+  fa_icon = "fas fa-info"
+
+[[params.social]]
+  url = "https://github.com/huderlem/"
+  fa_icon = "fab fa-github"
