@@ -97,7 +97,7 @@ Since the game engine doesn't understand Poryscript, the Poryscript transpiler c
 
 By carefully constructing every Block with this format, we end up with an interconnected list of Blocks that represent the entire control flow of the script. Let's look at how that works for the if/else logic in the script above.
 
-![Block Diagram](/posts/poryscript/block-diagram.png)
+![Block Diagram](/blog/posts/poryscript/block-diagram.png)
 
 The blocks form a directed and fully-connected graph. Since each block knows its destination Block(s), the Poryscript transpiler can render the equivalent bytecode script commands by including `goto` statements to jump to each Block. Without optimization, the resulting bytecode script is shown below. (Block numbers can be seen in the suffix of each label.)
 ```
