@@ -4,6 +4,10 @@ title = "Shanty Blog"
 theme = "charaka-custom"
 copyright = "&copy; <a href=\"https://github.com/huderlem\">Marcus Huderle</a> 2019"
 
+# Enable for syntax highlighting
+pygmentsUseClasses = true
+pygmentsCodefences = true
+
 [params]
 
 [author]

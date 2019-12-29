@@ -12,7 +12,7 @@ tags: ["poryscript", "pokemon", "game boy advance"]
 
 GitHub Link: https://github.com/huderlem/poryscript
 
-As the Pokémon Gen 3 decompilation projects mature, some of my focus has shifted to improving the developer experience. One of the painpoints of working with the Gen 3 engine is comprehending existing event scripts and writing new scripts. Poryscript is a higher-level scripting language that makes scripts writing scripts much simpler. In this blog post, I explain the motivation behind Poryscript and how it works.
+As the Pokémon Gen 3 decompilation projects mature, some of my focus has shifted to improving the developer experience. One of the painpoints of working with the Gen 3 engine is comprehending existing event scripts and writing new scripts. Poryscript is a higher-level scripting language that makes writing scripts much simpler. In this blog post, I explain the motivation behind Poryscript and how it works.
 
 I'll be referring specifically to [pokeemerald](https://github.com/pret/pokeemerald) for the rest of this post, but everything also applies to [pokeruby](https://github.com/pret/pokeruby) and [pokefirered](https://github.com/pret/pokefirered).
 
@@ -23,7 +23,7 @@ As mentioned above, the pokeemerald scripting engine can be painful to work with
 
 The scripting engine uses a data-driven approach. Scripts are written in bytecode which is composed of commands, comparisons, and jumps. Those bytecode commands are read and interpreted sequentially by the game's scripting engine. (The command interpretation functions are located in [`src/scrcmd.c`](https://github.com/pret/pokeemerald/blob/master/src/scrcmd.c)). The scripting bytecode commands are defined as assembler macros--these are human-friendly names that translate directly into bytes when the code is assembled into the final game ROM. Here is an example of a simple script when the player meets their rival on Route 103:
 
-```
+```plaintext
 Route103_EventScript_Rival::
     lockall
     checkplayergender
@@ -38,7 +38,7 @@ Route103_EventScript_RivalMay::
     closemessage
     ...
 
-Route103_EventScript_RivalBrendan:: @ 81EC434
+Route103_EventScript_RivalBrendan::
     msgbox Route103_Text_BrendanRoute103Pokemon, MSGBOX_DEFAULT
     closemessage
     ...
@@ -70,7 +70,7 @@ The text is referred to with a label in the scripts above. In order to see what 
 
 Poryscript addresses all of those issues by introducing some high-level control-flow constructs and syntactic sugar. When designing Poryscript, I started by writing out what I felt was a reasonable way to write scripts. The syntax I settled on looks like this:
 
-```
+```plaintext
 script Route103_EventScript_Rival {
     lockall
     checkplayergender
@@ -100,7 +100,7 @@ By carefully constructing every Block with this format, we end up with an interc
 ![Block Diagram](/blog/posts/poryscript/block-diagram.png)
 
 The blocks form a directed and fully-connected graph. Since each block knows its destination Block(s), the Poryscript transpiler can render the equivalent bytecode script commands by including `goto` statements to jump to each Block. Without optimization, the resulting bytecode script is shown below. (Block numbers can be seen in the suffix of each label.)
-```
+```plaintext
 Route103_EventScript_Rival::
     lockall
     checkplayergender
@@ -133,7 +133,7 @@ Route103_EventScript_Rival_Text_1:
 
 The result can be optimized further by reordering Blocks to take advantage of "fall through" behavior, which reduces unnecessary `goto` commands. Let's say Block A jumps to Block B. If Block B is moved directly after Block A, then Block A doesn't need a `goto` command to navigate to Block B--it will "fall through" naturally, since it's the next bytecode command. The optimized version of the above script looks like this, and it only requires two `goto` commands instead of four:
 
-```
+```plaintext
 Route103_EventScript_Rival::
     lockall
     checkplayergender

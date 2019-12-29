@@ -96,22 +96,8 @@ body{
         border-radius: 5px;
     }
 
-    code {
-        border-radius: 5px;
-    }
-
-    pre {
-        padding: 1.25em 0;
-        code {
-            border-radius: 5px;
-            border-width: 1px;
-            border-style: solid;
-            border-color: $cyan;
-        }
-    }
-
-    :not(pre) > code { 
-        display: inline !important; 
+    :not(pre) > code {
+        display: inline !important;
         padding: .2em;
         background-color: #f5f5f5;
         color: $dark;

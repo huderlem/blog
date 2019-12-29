@@ -36,7 +36,7 @@ Let's take a loook at some of the simple effects and how they are applied to eac
 ### Invert Color Effect
 
 Inverting a color, also known as the "negative", is a common image processing technique out there. A pixel's inverted color can be calculated independently of surrounding pixels. In the context of standard 8-bit RGB values, it's defined as follows:
-```
+```plaintext
 inverted_red   = 255 - red
 inverted_green = 255 - green
 inverted_blue  = 255 - blue
