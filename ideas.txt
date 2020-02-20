@@ -1,0 +1,163 @@
+Blog Ideas:
+
+deoxys 100-step overflow "bug"
+unused bike panning effect in Gen 3
+cable car sprites (unused zigzagoon)
+porymap
+
+
+
+LazerPong Multiplayer:
+
+Carrot Crazy Series:
+- (x)passwords
+- text editing (intro, scene summary, languages)
+
+
+- Compressed Graphics
+
+First, identified where compressed graphics were being loaded. Write breakpoint on VRAM location, then look at stack to see where decompress function was called from (3eCA). Disassembled Func_3eca. Right away, some data in bank 6 is read, hl is param to Func_3eca.  Actually, Func_3eca handles both compressed and uncompressed graphics.
+
+$13 = 00010011
+$17 = 00010111
+$2e = 00101110
+
+ 00010011
+0 00100111
+00 01001110
+000 10011100
+0001 00111000  Start B
+00010 01110000
+000100 11100000
+0001001 11000000
+00010011 10000000
+000100111 00000000
+ 00010111
+0 00101111
+00 01011110
+000 10111100
+0001 01111000
+00010 11110000
+000101 11100000
+0001011 11000000
+00010111 10000000
+000101111 00000000
+ 00101110
+0 01011101
+00 10111010
+001 01110100
+0010 11101000
+
+10
+101  100
+
+
+
+A:
+    while 0 - load the next raw data byte into dest address
+    1 - do B
+
+B Commands:
+CopyBytes
+CopyRows
+
+
+B Flow:
+
+Decompress(byte* dest, byte* data, bit[] controlBits) {
+    i = 0
+    while not done {
+        if controlBits[i++] {
+            ProcessCommand(dest, data, controlBits, i)
+        } else {
+            CopySingleByte(dest, *data++)
+        }
+    }
+}
+
+ProcessCommand(byte* dest, byte* data, bit[] controlBits, int i) {
+    offset = 0
+    numBytes = 2
+    if !controlBits[i++] {
+        numBytes = numBytes * 2 + controlBits[i++]
+        if controlBits[i++] {
+            numBytes--
+            numBytes = (numBytes * 2) + controlBits[i++]
+            if numBytes == 9 {
+                numRows = 4bitInt(controlBits)
+                i += 4
+                LoadRows((numRows + 3) * 2)
+                return
+            }
+        }
+
+        CopyBytes_()
+    } else if !controlBits[i++] {
+        CopyBytes(offset, numBytes, data)
+    } else {
+        numBytes++
+        if !controlBits[i++] {
+            CopyBytes_()
+        } else {
+            numBytes = *data
+            data++
+            if numBytes {
+                numBytes += 8
+                CopyBytes_()
+            }
+        }
+    }
+}
+
+CopyBytes_() {
+    if controlBits[i++] {
+        offset = controlBits[i++]
+        if !controlBits[i++] {
+            if !offset {
+                offset++
+                offset = (offset * 2) + controlBits[i++]
+            }
+        } else {
+            offset = (offset * 2) + controlBits[i++]
+            offset |= 0x4
+            if !controlBits[i++] {
+                offset = (offset * 2) + controlBits[i++]
+            }
+        }
+    }
+
+    CopyBytes(offset, numBytes, data)
+}
+
+CopyBytes() {
+    src = dest - ((offset << 8) | *data) - 1
+    data++
+    Copy(dest, src, numBytes)
+}
+
+
+1
+	1
+		1
+			data[i] 0
+				0: exit
+			copy data[i] + 8 bytes at data[i] long offset
+		0: copy 3 bytes at data[i] long offset
+	0: copy 2 bytes at data[i] short offset
+0
+	0/1 numBytes = 4/5
+	1
+		0/1 numBytes = 6/7/8/9
+		numBytes 9
+			get 4-bit number
+			copy that many pairs of bytes from data[i]
+		copy 6/7/8 bytes at data[i] long offset
+	0: copy 4/5 bytes to data[i] long offset
+
+
+3: 1 1 0
+4: 0 0 0
+5: 0 1 0
+6: 0 0 1 0
+7: 0 0 1 1
+8: 0 1 1 0
