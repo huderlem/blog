@@ -1,0 +1,31 @@
+name: publish blog
+
+on:
+  push:
+    branches: [ master ]
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v2
+        with:
+          hugo-version: 'latest'
+          
+      - name: Build
+        run: hugo --minify --baseURL https://www.huderlem.com/blog
+
+      - name: Publish Site
+        uses: SamKirkland/FTP-Deploy-Action@4.0.0
+        with:
+          protocol: ftps
+          server: ${{ secrets.ftp_server }}
+          username: ${{ secrets.ftp_username }}
+          password: ${{ secrets.ftp_password }}
+          server-dir: /home/public/blog/
+          local-dir: public/
+          dry-run: true
