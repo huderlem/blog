@@ -20,12 +20,21 @@ jobs:
         run: hugo --minify --baseURL https://www.huderlem.com/blog
 
       - name: Publish Site
-        uses: SamKirkland/FTP-Deploy-Action@4.0.0
+        uses: garygrossgarten/github-action-scp@v0.7.1
         with:
-          protocol: ftps
-          server: ${{ secrets.ftp_server }}
+          local: public
+          remote: /home/public/blog
+          host: ${{ secrets.ftp_server }}
           username: ${{ secrets.ftp_username }}
           password: ${{ secrets.ftp_password }}
-          server-dir: /home/public/blog/
-          local-dir: public/
-          dry-run: true
+
+#       - name: Publish Site
+#         uses: SamKirkland/FTP-Deploy-Actionv0.7.1
+#         with:
+#           protocol: ftps
+#           server: ${{ secrets.ftp_server }}
+#           username: ${{ secrets.ftp_username }}
+#           password: ${{ secrets.ftp_password }}
+#           server-dir: /home/public/blog/
+#           local-dir: public/
+#           dry-run: true
