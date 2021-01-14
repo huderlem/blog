@@ -18,6 +18,7 @@ GitHub Link: https://github.com/huderlem/carrotcrazy
 - [Part 1 - Passwords]({{< ref "carrot-crazy-1.md" >}})
 - [Part 2 - Graphics Compression]({{< ref "carrot-crazy-2.md" >}})
 - [Part 3 - Level Maps]({{< ref "carrot-crazy-3.md" >}})
+- [Part 4 - Entities & Metasprites]({{< ref "carrot-crazy-4.md" >}})
 
 ## Goal
 
